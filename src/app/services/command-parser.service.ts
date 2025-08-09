@@ -10,154 +10,246 @@ export class CommandParserService {
     const commands: Command[] = [];
     const errors: ParseError[] = [];
     
-    // Normalize input: remove extra whitespace, convert to uppercase
-    const lines = input.trim().split('\n').map(line => line.trim().toUpperCase());
-    
-    let lineNumber = 0;
-    
     try {
-      for (const line of lines) {
-        lineNumber++;
-        if (line === '' || line.startsWith('#')) continue; // Skip empty lines and comments
-        
-        const lineCommands = this.parseLine(line, lineNumber);
-        if (lineCommands.errors.length > 0) {
-          errors.push(...lineCommands.errors);
-        } else {
-          commands.push(...lineCommands.commands);
-        }
-      }
+      // Normalize input and handle multi-line REPEAT commands
+      const normalizedInput = this.normalizeInput(input);
+      const tokens = this.tokenize(normalizedInput);
+      const parsed = this.parseTokens(tokens);
+      
+      return {
+        commands: parsed.commands,
+        errors: parsed.errors
+      };
     } catch (error) {
       errors.push({
-        message: `Unexpected error: ${error}`,
-        line: lineNumber
+        message: `Unexpected parsing error: ${error}`,
+        line: 1
       });
+      return { commands, errors };
     }
-    
-    return { commands, errors };
   }
 
-  private parseLine(line: string, lineNumber: number): ParsedProgram {
+  private normalizeInput(input: string): string {
+    // Remove comments and normalize whitespace
+    return input
+      .split('\n')
+      .map(line => line.replace(/#.*$/, '').trim()) // Remove comments
+      .filter(line => line.length > 0) // Remove empty lines
+      .join(' ')
+      .replace(/\s+/g, ' ') // Normalize whitespace
+      .toUpperCase();
+  }
+
+  private tokenize(input: string): string[] {
+    // Split into tokens while preserving brackets
+    const tokens: string[] = [];
+    let current = '';
+    
+    for (let i = 0; i < input.length; i++) {
+      const char = input[i];
+      
+      if (char === '[' || char === ']') {
+        if (current.trim()) {
+          tokens.push(...current.trim().split(/\s+/));
+          current = '';
+        }
+        tokens.push(char);
+      } else if (char === ' ') {
+        if (current.trim()) {
+          tokens.push(current.trim());
+          current = '';
+        }
+      } else {
+        current += char;
+      }
+    }
+    
+    if (current.trim()) {
+      tokens.push(current.trim());
+    }
+    
+    return tokens.filter(token => token.length > 0);
+  }
+
+  private parseTokens(tokens: string[]): ParsedProgram {
     const commands: Command[] = [];
     const errors: ParseError[] = [];
     
-    // Handle REPEAT command with brackets
-    if (line.includes('REPEAT')) {
-      return this.parseRepeatCommand(line, lineNumber);
-    }
-    
-    // Split by spaces and parse individual commands
-    const tokens = line.split(/\s+/).filter(token => token.length > 0);
-    
-    for (let i = 0; i < tokens.length; i++) {
-      const token = tokens[i];
-      
-      switch (token) {
-        case 'FORWARD':
-        case 'FD':
-          const distance = this.parseNumber(tokens[i + 1]);
-          if (distance === null) {
-            errors.push({
-              message: 'FORWARD command requires a number',
-              line: lineNumber
-            });
-          } else {
-            commands.push({ type: 'FORWARD', value: distance });
-            i++; // Skip the number token
-          }
-          break;
-          
-        case 'LEFT':
-        case 'LT':
-          const leftAngle = this.parseNumber(tokens[i + 1]);
-          if (leftAngle === null) {
-            errors.push({
-              message: 'LEFT command requires a number',
-              line: lineNumber
-            });
-          } else {
-            commands.push({ type: 'LEFT', value: leftAngle });
-            i++; // Skip the number token
-          }
-          break;
-          
-        case 'RIGHT':
-        case 'RT':
-          const rightAngle = this.parseNumber(tokens[i + 1]);
-          if (rightAngle === null) {
-            errors.push({
-              message: 'RIGHT command requires a number',
-              line: lineNumber
-            });
-          } else {
-            commands.push({ type: 'RIGHT', value: rightAngle });
-            i++; // Skip the number token
-          }
-          break;
-          
-        case 'PENUP':
-        case 'PU':
-          commands.push({ type: 'PENUP' });
-          break;
-          
-        case 'PENDOWN':
-        case 'PD':
-          commands.push({ type: 'PENDOWN' });
-          break;
-          
-        case 'CLEAR':
-          commands.push({ type: 'CLEAR' });
-          break;
-          
-        default:
-          errors.push({
-            message: `Unknown command: ${token}`,
-            line: lineNumber
-          });
+    let i = 0;
+    while (i < tokens.length) {
+      try {
+        const result = this.parseCommand(tokens, i);
+        if (result.error) {
+          errors.push({ message: result.error, line: 1 });
+        } else if (result.command) {
+          commands.push(result.command);
+        }
+        i = result.nextIndex;
+      } catch (error) {
+        errors.push({ message: `Error parsing token '${tokens[i]}': ${error}`, line: 1 });
+        i++;
       }
     }
     
     return { commands, errors };
   }
 
-  private parseRepeatCommand(line: string, lineNumber: number): ParsedProgram {
-    const commands: Command[] = [];
-    const errors: ParseError[] = [];
-    
-    // Extract REPEAT n [ ... ] pattern
-    const repeatMatch = line.match(/REPEAT\s+(\d+)\s*\[\s*(.*?)\s*\]/);
-    if (!repeatMatch) {
-      errors.push({
-        message: 'Invalid REPEAT syntax. Use: REPEAT n [ commands ]',
-        line: lineNumber
-      });
-      return { commands, errors };
+  private parseCommand(tokens: string[], startIndex: number): { 
+    command?: Command, 
+    error?: string, 
+    nextIndex: number 
+  } {
+    if (startIndex >= tokens.length) {
+      return { nextIndex: startIndex };
     }
-    
-    const repeatCount = parseInt(repeatMatch[1]);
-    const repeatCommands = repeatMatch[2];
-    
-    if (repeatCount <= 0 || repeatCount > 1000) {
-      errors.push({
-        message: 'REPEAT count must be between 1 and 1000',
-        line: lineNumber
-      });
-      return { commands, errors };
+
+    const token = tokens[startIndex];
+
+    switch (token) {
+      case 'FORWARD':
+      case 'FD':
+        return this.parseMovementCommand('FORWARD', tokens, startIndex);
+        
+      case 'LEFT':
+      case 'LT':
+        return this.parseMovementCommand('LEFT', tokens, startIndex);
+        
+      case 'RIGHT':
+      case 'RT':
+        return this.parseMovementCommand('RIGHT', tokens, startIndex);
+        
+      case 'PENUP':
+      case 'PU':
+        return { command: { type: 'PENUP' }, nextIndex: startIndex + 1 };
+        
+      case 'PENDOWN':
+      case 'PD':
+        return { command: { type: 'PENDOWN' }, nextIndex: startIndex + 1 };
+        
+      case 'CLEAR':
+        return { command: { type: 'CLEAR' }, nextIndex: startIndex + 1 };
+        
+      case 'REPEAT':
+        return this.parseRepeatCommand(tokens, startIndex);
+        
+      default:
+        return { 
+          error: `Unknown command: ${token}`, 
+          nextIndex: startIndex + 1 
+        };
     }
+  }
+
+  private parseMovementCommand(
+    type: 'FORWARD' | 'LEFT' | 'RIGHT', 
+    tokens: string[], 
+    startIndex: number
+  ): { command?: Command, error?: string, nextIndex: number } {
+    if (startIndex + 1 >= tokens.length) {
+      return { 
+        error: `${type} command requires a number`, 
+        nextIndex: startIndex + 1 
+      };
+    }
+
+    const valueToken = tokens[startIndex + 1];
+    const value = this.parseNumber(valueToken);
     
-    // Parse the commands inside the brackets
-    const innerParsed = this.parseLine(repeatCommands, lineNumber);
+    if (value === null) {
+      return { 
+        error: `${type} command requires a valid number, got '${valueToken}'`, 
+        nextIndex: startIndex + 2 
+      };
+    }
+
+    return { 
+      command: { type, value }, 
+      nextIndex: startIndex + 2 
+    };
+  }
+
+  private parseRepeatCommand(tokens: string[], startIndex: number): {
+    command?: Command,
+    error?: string,
+    nextIndex: number
+  } {
+    // REPEAT n [ commands ]
+    if (startIndex + 2 >= tokens.length) {
+      return {
+        error: 'REPEAT command requires: REPEAT n [ commands ]',
+        nextIndex: startIndex + 1
+      };
+    }
+
+    const countToken = tokens[startIndex + 1];
+    const repeatCount = this.parseNumber(countToken);
+    
+    if (repeatCount === null || repeatCount <= 0 || repeatCount > 1000) {
+      return {
+        error: 'REPEAT count must be a number between 1 and 1000',
+        nextIndex: startIndex + 2
+      };
+    }
+
+    // Find opening bracket
+    if (tokens[startIndex + 2] !== '[') {
+      return {
+        error: 'REPEAT command requires opening bracket [',
+        nextIndex: startIndex + 3
+      };
+    }
+
+    // Find matching closing bracket
+    let bracketCount = 0;
+    let closeIndex = -1;
+    
+    for (let i = startIndex + 2; i < tokens.length; i++) {
+      if (tokens[i] === '[') {
+        bracketCount++;
+      } else if (tokens[i] === ']') {
+        bracketCount--;
+        if (bracketCount === 0) {
+          closeIndex = i;
+          break;
+        }
+      }
+    }
+
+    if (closeIndex === -1) {
+      return {
+        error: 'REPEAT command missing closing bracket ]',
+        nextIndex: tokens.length
+      };
+    }
+
+    // Extract tokens between brackets
+    const innerTokens = tokens.slice(startIndex + 3, closeIndex);
+    
+    if (innerTokens.length === 0) {
+      return {
+        error: 'REPEAT command cannot be empty',
+        nextIndex: closeIndex + 1
+      };
+    }
+
+    // Parse inner commands
+    const innerParsed = this.parseTokens(innerTokens);
+    
     if (innerParsed.errors.length > 0) {
-      errors.push(...innerParsed.errors);
-    } else {
-      commands.push({
+      return {
+        error: `Error in REPEAT commands: ${innerParsed.errors[0].message}`,
+        nextIndex: closeIndex + 1
+      };
+    }
+
+    return {
+      command: {
         type: 'REPEAT',
         value: repeatCount,
         commands: innerParsed.commands
-      });
-    }
-    
-    return { commands, errors };
+      },
+      nextIndex: closeIndex + 1
+    };
   }
 
   private parseNumber(token: string): number | null {
@@ -185,10 +277,7 @@ RIGHT 30
 FORWARD 60
 RIGHT 120
 FORWARD 60`,
-      'Flower': `REPEAT 8 [ 
-  REPEAT 36 [ FORWARD 2 RIGHT 10 ] 
-  RIGHT 45 
-]`
+      'Flower': 'REPEAT 8 [ REPEAT 36 [ FORWARD 2 RIGHT 10 ] RIGHT 45 ]'
     };
   }
 }

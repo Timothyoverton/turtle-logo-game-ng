@@ -28,15 +28,20 @@ export class TurtleEngineService {
   readonly canvasHeight = this.CANVAS_HEIGHT;
 
   reset(startPosition?: TurtlePosition): void {
+    const currentColor = this.turtle().color; // Preserve current color
     this.turtle.set({
       position: startPosition || { x: this.CANVAS_CENTER_X, y: this.CANVAS_CENTER_Y, angle: 0 },
       penDown: true,
-      color: '#00FF00',
+      color: currentColor,
       penSize: 2
     });
     this.drawing.set([]);
     this.isRunning.set(false);
     this.currentCommandIndex.set(0);
+  }
+
+  setTurtleColor(color: string): void {
+    this.turtle.update(turtle => ({ ...turtle, color }));
   }
 
   executeCommand(command: Command): boolean {

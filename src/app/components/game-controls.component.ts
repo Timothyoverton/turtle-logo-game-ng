@@ -1,10 +1,12 @@
 import { Component } from '@angular/core';
 import { GameStateService } from '../services/game-state.service';
 import { TurtleEngineService } from '../services/turtle-engine.service';
+import { ColorPickerComponent } from './color-picker.component';
 
 @Component({
   selector: 'app-game-controls',
   standalone: true,
+  imports: [ColorPickerComponent],
   template: `
     <div class="game-controls">
       <div class="mode-selector">
@@ -108,6 +110,9 @@ import { TurtleEngineService } from '../services/turtle-engine.service';
             </button>
           }
         </div>
+        
+        <!-- Color Picker -->
+        <app-color-picker (colorChange)="onColorChange($event)"></app-color-picker>
       </div>
     </div>
   `,
@@ -340,5 +345,9 @@ export class GameControlsComponent {
 
   stopExecution(): void {
     this.turtleEngine.stopExecution();
+  }
+
+  onColorChange(color: string): void {
+    this.turtleEngine.setTurtleColor(color);
   }
 }
