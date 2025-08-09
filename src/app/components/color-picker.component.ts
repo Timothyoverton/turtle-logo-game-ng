@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { TurtleEngineService } from '../services/turtle-engine.service';
 
 @Component({
   selector: 'app-color-picker',
@@ -10,14 +11,15 @@ import { Component, EventEmitter, Output, signal } from '@angular/core';
       <!-- Preset Colors -->
       <div class="preset-colors">
         <div class="color-grid">
-          @for (color of presetColors; track color.hex) {
+          @for (color of colorPalette; track color.index) {
             <button 
               class="color-button"
-              [class.selected]="selectedColor() === color.hex"
-              [style.background-color]="color.hex"
-              [title]="color.name"
-              (click)="selectColor(color.hex)">
-              @if (selectedColor() === color.hex) {
+              [class.selected]="selectedColor() === color.color"
+              [style.background-color]="color.color"
+              [title]="color.name + ' (COL ' + color.index + ')'"
+              (click)="selectColor(color.color)">
+              <span class="color-number">{{ color.index }}</span>
+              @if (selectedColor() === color.color) {
                 <span class="check-mark">✓</span>
               }
             </button>
@@ -96,10 +98,26 @@ import { Component, EventEmitter, Output, signal } from '@angular/core';
       box-shadow: 0 0 0 2px #4CAF50;
     }
     
+    .color-number {
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: white;
+      font-size: 0.7rem;
+      font-weight: bold;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+      line-height: 1;
+    }
+    
     .check-mark {
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
       color: white;
       font-weight: bold;
-      font-size: 1.2rem;
+      font-size: 1rem;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
     }
     
@@ -183,24 +201,11 @@ export class ColorPickerComponent {
   
   selectedColor = signal('#00FF00'); // Default green
   
-  readonly presetColors = [
-    { name: 'Bright Green', hex: '#00FF00' },
-    { name: 'Blue', hex: '#0066FF' },
-    { name: 'Red', hex: '#FF3333' },
-    { name: 'Orange', hex: '#FF8800' },
-    { name: 'Purple', hex: '#8833FF' },
-    { name: 'Pink', hex: '#FF33CC' },
-    { name: 'Yellow', hex: '#FFDD00' },
-    { name: 'Cyan', hex: '#00FFFF' },
-    { name: 'Magenta', hex: '#FF00FF' },
-    { name: 'Lime', hex: '#88FF00' },
-    { name: 'Dark Blue', hex: '#003388' },
-    { name: 'Dark Red', hex: '#880033' },
-    { name: 'Forest Green', hex: '#228833' },
-    { name: 'Brown', hex: '#8B4513' },
-    { name: 'Gray', hex: '#666666' },
-    { name: 'Black', hex: '#000000' }
-  ];
+  readonly colorPalette;
+
+  constructor(private turtleEngine: TurtleEngineService) {
+    this.colorPalette = this.turtleEngine.getColorPalette();
+  }
 
   selectColor(color: string): void {
     this.selectedColor.set(color);

@@ -89,6 +89,7 @@ REPEAT 4 [ FORWARD 50 RIGHT 90 ]"
             <ul>
               <li><code>PENUP</code> - Lift pen (stop drawing)</li>
               <li><code>PENDOWN</code> - Put pen down (start drawing)</li>
+              <li><code>COL 5</code> - Change color (0-15)</li>
               <li><code>CLEAR</code> - Clear the canvas</li>
             </ul>
           </div>

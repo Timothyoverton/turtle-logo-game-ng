@@ -129,6 +129,10 @@ export class CommandParserService {
       case 'CLEAR':
         return { command: { type: 'CLEAR' }, nextIndex: startIndex + 1 };
         
+      case 'COL':
+      case 'COLOR':
+        return this.parseMovementCommand('COL', tokens, startIndex);
+        
       case 'REPEAT':
         return this.parseRepeatCommand(tokens, startIndex);
         
@@ -141,7 +145,7 @@ export class CommandParserService {
   }
 
   private parseMovementCommand(
-    type: 'FORWARD' | 'LEFT' | 'RIGHT', 
+    type: 'FORWARD' | 'LEFT' | 'RIGHT' | 'COL', 
     tokens: string[], 
     startIndex: number
   ): { command?: Command, error?: string, nextIndex: number } {
@@ -276,18 +280,31 @@ FORWARD 80
 RIGHT 30
 FORWARD 50
 RIGHT 120
+FORWARD 50
+RIGHT 120
 FORWARD 50`,
       'Flower': 'REPEAT 8 [ REPEAT 20 [ FORWARD 8 RIGHT 18 ] RIGHT 45 ]',
-      'Big Flower': 'REPEAT 12 [ REPEAT 15 [ FORWARD 12 RIGHT 24 ] RIGHT 30 ]',
-      'Sunflower': `REPEAT 20 [
-FORWARD 80
-REPEAT 8 [ FORWARD 15 RIGHT 45 ]
+      'Big Flower': 'REPEAT 12 [ REPEAT 15 [ FORWARD 24 RIGHT 24 ] RIGHT 30 ]',
+      'Sunflower': `REPEAT 16 [
+FORWARD 40
+REPEAT 6 [ FORWARD 8 RIGHT 60 ]
 PENUP
-FORWARD 80
+FORWARD 40
 PENDOWN
-RIGHT 18
+RIGHT 22.5
 ]`,
-      'Rainbow Spiral': 'REPEAT 360 [ FORWARD 3 RIGHT 91 ]'
+      'Rainbow Spiral': 'REPEAT 360 [ FORWARD 3 RIGHT 91 ]',
+      'Rainbow Square': `COL 2
+FORWARD 100
+COL 6
+RIGHT 90
+FORWARD 100
+COL 1
+RIGHT 90
+FORWARD 100
+COL 4
+RIGHT 90
+FORWARD 100`
     };
   }
 }

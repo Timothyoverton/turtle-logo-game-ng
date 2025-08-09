@@ -109,6 +109,11 @@ export class TurtleEngineService {
       case 'CLEAR':
         newDrawing = [];
         break;
+
+      case 'COL':
+        const colorIndex = command.value || 0;
+        newTurtle.color = this.getColorByIndex(Math.floor(colorIndex));
+        break;
     }
 
     this.turtle.set(newTurtle);
@@ -215,5 +220,45 @@ export class TurtleEngineService {
 
   calculateAngle(from: { x: number; y: number }, to: { x: number; y: number }): number {
     return Math.atan2(from.y - to.y, to.x - from.x) * 180 / Math.PI;
+  }
+
+  // Color palette for COL command (matches the color picker)
+  private readonly colorPalette = [
+    '#00FF00', // 0 - Bright Green (default)
+    '#0066FF', // 1 - Blue
+    '#FF3333', // 2 - Red
+    '#FF8800', // 3 - Orange
+    '#8833FF', // 4 - Purple
+    '#FF33CC', // 5 - Pink
+    '#FFDD00', // 6 - Yellow
+    '#00FFFF', // 7 - Cyan
+    '#FF00FF', // 8 - Magenta
+    '#88FF00', // 9 - Lime
+    '#003388', // 10 - Dark Blue
+    '#880033', // 11 - Dark Red
+    '#228833', // 12 - Forest Green
+    '#8B4513', // 13 - Brown
+    '#666666', // 14 - Gray
+    '#000000'  // 15 - Black
+  ];
+
+  getColorByIndex(index: number): string {
+    // Wrap around if index is out of bounds
+    const safeIndex = ((index % this.colorPalette.length) + this.colorPalette.length) % this.colorPalette.length;
+    return this.colorPalette[safeIndex];
+  }
+
+  getColorPalette(): Array<{ index: number; color: string; name: string }> {
+    const names = [
+      'Bright Green', 'Blue', 'Red', 'Orange', 'Purple', 'Pink',
+      'Yellow', 'Cyan', 'Magenta', 'Lime', 'Dark Blue', 'Dark Red',
+      'Forest Green', 'Brown', 'Gray', 'Black'
+    ];
+    
+    return this.colorPalette.map((color, index) => ({
+      index,
+      color,
+      name: names[index] || `Color ${index}`
+    }));
   }
 }
