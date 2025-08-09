@@ -9,7 +9,12 @@
       "Bash(git init:*)",
       "Bash(git remote add:*)",
       "Bash(npm run build:prod:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(npm run deploy:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:timothyoverton.github.io)"
     ],
     "deny": []
   }
