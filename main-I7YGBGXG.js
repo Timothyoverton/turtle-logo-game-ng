@@ -14,13 +14,13 @@ FORWARD 50
 RIGHT 120
 FORWARD 50
 RIGHT 120
-FORWARD 50`,Flower:"REPEAT 8 [ REPEAT 20 [ FORWARD 8 RIGHT 18 ] RIGHT 45 ]","Big Flower":"REPEAT 12 [ REPEAT 15 [ FORWARD 12 RIGHT 24 ] RIGHT 30 ]",Sunflower:`REPEAT 20 [
-FORWARD 80
-REPEAT 8 [ FORWARD 15 RIGHT 45 ]
+FORWARD 50`,Flower:"REPEAT 8 [ REPEAT 20 [ FORWARD 8 RIGHT 18 ] RIGHT 45 ]","Big Flower":"REPEAT 12 [ REPEAT 15 [ FORWARD 12 RIGHT 24 ] RIGHT 30 ]",Sunflower:`REPEAT 16 [
+FORWARD 40
+REPEAT 6 [ FORWARD 8 RIGHT 60 ]
 PENUP
-FORWARD 80
+FORWARD 40
 PENDOWN
-RIGHT 18
+RIGHT 22.5
 ]`,"Rainbow Spiral":"REPEAT 360 [ FORWARD 3 RIGHT 91 ]"}}static \u0275fac=function(n){return new(n||e)};static \u0275prov=O({token:e,factory:e.\u0275fac,providedIn:"root"})};var QE=(e,t)=>t.message;function YE(e,t){if(e&1&&(m(0,"option",5),h(1),g()),e&2){let n=t.$implicit;Te("value",n),y(),ee(n)}}function KE(e,t){if(e&1&&(m(0,"div",18)(1,"span",19),h(2),g(),m(3,"span",20),h(4),g()()),e&2){let n=t.$implicit;y(2),ge("Line ",n.line,":"),y(2),ee(n.message)}}function JE(e,t){if(e&1&&(m(0,"div",8)(1,"h4"),h(2,"Errors:"),g(),de(3,KE,5,2,"div",18,QE),g()),e&2){let n=U();y(3),fe(n.errors())}}var $i=class e{constructor(t){this.parser=t;this.samplePrograms=this.parser.generateSamplePrograms(),this.sampleProgramKeys=Object.keys(this.samplePrograms)}runCommands=new z;stepCommands=new z;clearCanvas=new z;commands=L("");errors=L([]);samplePrograms;sampleProgramKeys;onCommandsChange(){let t=this.parser.parseCommands(this.commands());this.errors.set(t.errors)}loadSample(t){let n=t.target,r=n.value;r&&this.samplePrograms[r]&&(this.commands.set(this.samplePrograms[r]),this.onCommandsChange()),n.value=""}runProgram(){let t=this.parser.parseCommands(this.commands());t.errors.length===0&&this.runCommands.emit(t)}stepProgram(){let t=this.parser.parseCommands(this.commands());t.errors.length===0&&this.stepCommands.emit(t)}clearProgram(){this.commands.set(""),this.errors.set([]),this.clearCanvas.emit()}canRun(){return this.commands().trim().length>0&&this.errors().length===0}onLoadProgram(t){this.commands.set(t),this.onCommandsChange()}static \u0275fac=function(n){return new(n||e)(A(Bi))};static \u0275cmp=ce({type:e,selectors:[["app-command-input"]],outputs:{runCommands:"runCommands",stepCommands:"stepCommands",clearCanvas:"clearCanvas"},decls:68,vars:5,consts:[[1,"command-input-container"],[1,"input-header"],[1,"sample-programs"],[1,"sample-select",3,"change"],["value",""],[3,"value"],[1,"textarea-container"],["placeholder",`Enter turtle commands here...
 Example:
 FORWARD 100
