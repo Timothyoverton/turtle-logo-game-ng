@@ -1,46 +1,35 @@
-<style>
-  :host {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    box-sizing: border-box;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+<!DOCTYPE html>
+<div class="turtle-game-app">
+  <header class="app-header">
+    <h1>{{ title() }}</h1>
+    <p class="subtitle">Learn programming with Logo turtle graphics! 🐢</p>
+  </header>
 
-  main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
+  <main class="game-layout">
+    <!-- Game Controls Sidebar -->
+    <aside class="controls-sidebar">
+      <app-game-controls></app-game-controls>
+    </aside>
 
-  .container {
-    text-align: center;
-    padding: 2rem;
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-  }
+    <!-- Main Game Area -->
+    <section class="game-area">
+      <!-- Turtle Canvas -->
+      <div class="canvas-section">
+        <app-turtle-canvas></app-turtle-canvas>
+      </div>
+    </section>
 
-  h1 {
-    font-size: 3rem;
-    color: #333;
-    margin: 0;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
-  }
+    <!-- Command Input Sidebar -->
+    <aside class="input-sidebar">
+      <app-command-input 
+        (runCommands)="onRunCommands($event)"
+        (stepCommands)="onStepCommands($event)"
+        (clearCanvas)="onClearCanvas()">
+      </app-command-input>
+    </aside>
+  </main>
 
-  p {
-    font-size: 1.2rem;
-    color: #666;
-    margin-top: 1rem;
-  }
-</style>
-
-<main>
-  <div class="container">
-    <h1>Can you see me?</h1>
-    <p>{{ title() }} is working! 🚀</p>
-  </div>
-</main>
-
-
+  <footer class="app-footer">
+    <p>🎯 Complete challenges to learn programming concepts | 🎨 Use Creative Mode to experiment freely</p>
+  </footer>
+</div>
