@@ -8,27 +8,27 @@ import { TurtleEngineService } from '../services/turtle-engine.service';
     <div class="compass-container">
       <div class="compass-rose">
         <!-- Compass circle -->
-        <svg viewBox="0 0 240 240" class="compass-svg">
+        <svg viewBox="0 0 280 280" class="compass-svg">
           <!-- Background circle -->
-          <circle cx="120" cy="120" r="100" fill="#f8f9fa" stroke="#333" stroke-width="2"/>
+          <circle cx="140" cy="140" r="100" fill="#f8f9fa" stroke="#333" stroke-width="2"/>
           
           <!-- Main direction lines -->
           <g class="cardinal-directions">
             <!-- North -->
-            <line x1="120" y1="30" x2="120" y2="210" stroke="#333" stroke-width="2"/>
+            <line x1="140" y1="50" x2="140" y2="230" stroke="#333" stroke-width="2"/>
             <!-- East -->
-            <line x1="30" y1="120" x2="210" y2="120" stroke="#333" stroke-width="2"/>
+            <line x1="50" y1="140" x2="230" y2="140" stroke="#333" stroke-width="2"/>
           </g>
           
           <!-- Degree markings -->
           <g class="degree-marks">
             @for (angle of degreeMarks; track angle) {
-              <g [attr.transform]="'rotate(' + angle + ' 120 120)'">
+              <g [attr.transform]="'rotate(' + angle + ' 140 140)'">
                 <line 
-                  x1="120" 
-                  y1="35" 
-                  x2="120" 
-                  [attr.y2]="angle % 45 === 0 ? 45 : (angle % 15 === 0 ? 40 : 38)"
+                  x1="140" 
+                  y1="55" 
+                  x2="140" 
+                  [attr.y2]="angle % 45 === 0 ? 65 : (angle % 15 === 0 ? 60 : 58)"
                   stroke="#666" 
                   [attr.stroke-width]="angle % 45 === 0 ? 2 : 1"/>
               </g>
@@ -38,50 +38,50 @@ import { TurtleEngineService } from '../services/turtle-engine.service';
           <!-- Direction labels -->
           <g class="direction-labels">
             <!-- North -->
-            <text x="120" y="15" text-anchor="middle" class="cardinal-label">N</text>
-            <text x="120" y="5" text-anchor="middle" class="degree-label">0°</text>
+            <text x="140" y="35" text-anchor="middle" class="cardinal-label">N</text>
+            <text x="140" y="25" text-anchor="middle" class="degree-label">0°</text>
             
             <!-- Northeast -->
-            <text x="190" y="55" text-anchor="middle" class="intercardinal-label">NE</text>
-            <text x="200" y="45" text-anchor="middle" class="degree-label">45°</text>
+            <text x="210" y="75" text-anchor="middle" class="intercardinal-label">NE</text>
+            <text x="220" y="65" text-anchor="middle" class="degree-label">45°</text>
             
             <!-- East -->
-            <text x="225" y="125" text-anchor="middle" class="cardinal-label">E</text>
-            <text x="235" y="115" text-anchor="middle" class="degree-label">90°</text>
+            <text x="245" y="145" text-anchor="middle" class="cardinal-label">E</text>
+            <text x="255" y="135" text-anchor="middle" class="degree-label">90°</text>
             
             <!-- Southeast -->
-            <text x="190" y="195" text-anchor="middle" class="intercardinal-label">SE</text>
-            <text x="200" y="205" text-anchor="middle" class="degree-label">135°</text>
+            <text x="210" y="215" text-anchor="middle" class="intercardinal-label">SE</text>
+            <text x="220" y="225" text-anchor="middle" class="degree-label">135°</text>
             
             <!-- South -->
-            <text x="120" y="235" text-anchor="middle" class="cardinal-label">S</text>
-            <text x="120" y="245" text-anchor="middle" class="degree-label">180°</text>
+            <text x="140" y="255" text-anchor="middle" class="cardinal-label">S</text>
+            <text x="140" y="265" text-anchor="middle" class="degree-label">180°</text>
             
             <!-- Southwest -->
-            <text x="50" y="195" text-anchor="middle" class="intercardinal-label">SW</text>
-            <text x="40" y="205" text-anchor="middle" class="degree-label">225°</text>
+            <text x="70" y="215" text-anchor="middle" class="intercardinal-label">SW</text>
+            <text x="60" y="225" text-anchor="middle" class="degree-label">225°</text>
             
             <!-- West -->
-            <text x="15" y="125" text-anchor="middle" class="cardinal-label">W</text>
-            <text x="5" y="115" text-anchor="middle" class="degree-label">270°</text>
+            <text x="35" y="145" text-anchor="middle" class="cardinal-label">W</text>
+            <text x="25" y="135" text-anchor="middle" class="degree-label">270°</text>
             
             <!-- Northwest -->
-            <text x="50" y="55" text-anchor="middle" class="intercardinal-label">NW</text>
-            <text x="40" y="45" text-anchor="middle" class="degree-label">315°</text>
+            <text x="70" y="75" text-anchor="middle" class="intercardinal-label">NW</text>
+            <text x="60" y="65" text-anchor="middle" class="degree-label">315°</text>
           </g>
           
           <!-- Turtle direction indicator -->
           <g class="turtle-indicator" [attr.transform]="turtleIndicatorTransform()">
             <path 
-              d="M 120 120 L 115 105 L 120 95 L 125 105 Z" 
+              d="M 140 140 L 135 125 L 140 115 L 145 125 Z" 
               fill="#FF4444" 
               stroke="#CC0000" 
               stroke-width="1"/>
-            <circle cx="120" cy="120" r="3" fill="#FF4444"/>
+            <circle cx="140" cy="140" r="3" fill="#FF4444"/>
           </g>
           
           <!-- Center point -->
-          <circle cx="120" cy="120" r="2" fill="#333"/>
+          <circle cx="140" cy="140" r="2" fill="#333"/>
         </svg>
         
         <!-- Current angle display -->
@@ -312,7 +312,7 @@ export class CompassRoseComponent {
   
   readonly turtleIndicatorTransform = computed(() => {
     const angle = this.normalizedAngle();
-    return `rotate(${angle} 120 120)`;
+    return `rotate(${angle} 140 140)`;
   });
 
   constructor(private turtleEngine: TurtleEngineService) {}

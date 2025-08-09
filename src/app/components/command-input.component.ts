@@ -2,11 +2,12 @@ import { Component, EventEmitter, Output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommandParserService } from '../services/command-parser.service';
 import { ParsedProgram } from '../types/turtle.types';
+import { SaveLoadPanelComponent } from './save-load-panel.component';
 
 @Component({
   selector: 'app-command-input',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, SaveLoadPanelComponent],
   template: `
     <div class="command-input-container">
       <div class="input-header">
@@ -71,34 +72,40 @@ REPEAT 4 [ FORWARD 50 RIGHT 90 ]"
       </div>
       
       <div class="help-panel">
-        <details>
-          <summary>📚 Command Help</summary>
-          <div class="help-content">
-            <div class="help-section">
-              <strong>Movement:</strong>
-              <ul>
-                <li><code>FORWARD 100</code> - Move forward 100 pixels</li>
-                <li><code>LEFT 90</code> - Turn left 90 degrees</li>
-                <li><code>RIGHT 45</code> - Turn right 45 degrees</li>
-              </ul>
-            </div>
-            <div class="help-section">
-              <strong>Drawing:</strong>
-              <ul>
-                <li><code>PENUP</code> - Lift pen (stop drawing)</li>
-                <li><code>PENDOWN</code> - Put pen down (start drawing)</li>
-                <li><code>CLEAR</code> - Clear the canvas</li>
-              </ul>
-            </div>
-            <div class="help-section">
-              <strong>Loops:</strong>
-              <ul>
-                <li><code>REPEAT 4 [ FORWARD 50 RIGHT 90 ]</code> - Repeat commands</li>
-              </ul>
-            </div>
+        <div class="help-header">
+          📚 Command Help
+        </div>
+        <div class="help-content">
+          <div class="help-section">
+            <strong>Movement:</strong>
+            <ul>
+              <li><code>FORWARD 100</code> - Move forward 100 pixels</li>
+              <li><code>LEFT 90</code> - Turn left 90 degrees</li>
+              <li><code>RIGHT 45</code> - Turn right 45 degrees</li>
+            </ul>
           </div>
-        </details>
+          <div class="help-section">
+            <strong>Drawing:</strong>
+            <ul>
+              <li><code>PENUP</code> - Lift pen (stop drawing)</li>
+              <li><code>PENDOWN</code> - Put pen down (start drawing)</li>
+              <li><code>CLEAR</code> - Clear the canvas</li>
+            </ul>
+          </div>
+          <div class="help-section">
+            <strong>Loops:</strong>
+            <ul>
+              <li><code>REPEAT 4 [ FORWARD 50 RIGHT 90 ]</code> - Repeat commands</li>
+            </ul>
+          </div>
+        </div>
       </div>
+      
+      <!-- Save & Load Panel -->
+      <app-save-load-panel 
+        [currentCode]="commands()"
+        (programLoaded)="onLoadProgram($event)">
+      </app-save-load-panel>
     </div>
   `,
   styles: [`
@@ -246,11 +253,14 @@ REPEAT 4 [ FORWARD 50 RIGHT 90 ]"
       padding-top: 1rem;
     }
     
-    .help-panel summary {
-      cursor: pointer;
+    .help-header {
       font-weight: bold;
-      color: #666;
+      color: #333;
       padding: 0.5rem 0;
+      text-align: center;
+      background: #f8f9fa;
+      border-radius: 4px;
+      margin-bottom: 0.75rem;
     }
     
     .help-content {
@@ -332,5 +342,10 @@ export class CommandInputComponent {
 
   canRun(): boolean {
     return this.commands().trim().length > 0 && this.errors().length === 0;
+  }
+
+  onLoadProgram(code: string): void {
+    this.commands.set(code);
+    this.onCommandsChange();
   }
 }
