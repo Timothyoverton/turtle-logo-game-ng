@@ -2,13 +2,14 @@ import { Component, signal, ViewChild, effect } from '@angular/core';
 import { TurtleCanvasComponent } from './components/turtle-canvas.component';
 import { CommandInputComponent } from './components/command-input.component';
 import { GameControlsComponent } from './components/game-controls.component';
+import { CompassRoseComponent } from './components/compass-rose.component';
 import { TurtleEngineService } from './services/turtle-engine.service';
 import { GameStateService } from './services/game-state.service';
 import { ParsedProgram } from './types/turtle.types';
 
 @Component({
   selector: 'app-root',
-  imports: [TurtleCanvasComponent, CommandInputComponent, GameControlsComponent],
+  imports: [TurtleCanvasComponent, CommandInputComponent, GameControlsComponent, CompassRoseComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

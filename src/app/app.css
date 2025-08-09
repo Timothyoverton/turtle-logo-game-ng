@@ -48,8 +48,10 @@
 .game-area {
   grid-area: canvas;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
+  gap: 1.5rem;
   min-height: 600px;
 }
 
@@ -61,6 +63,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.compass-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
 /* Footer */
