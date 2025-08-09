@@ -287,7 +287,7 @@ FORWARD 80
 PENDOWN
 RIGHT 18
 ]`,
-      'Rainbow Spiral': 'REPEAT 200 [ FORWARD 2 RIGHT 91 ]'
+      'Rainbow Spiral': 'REPEAT 360 [ FORWARD 3 RIGHT 91 ]'
     };
   }
 }

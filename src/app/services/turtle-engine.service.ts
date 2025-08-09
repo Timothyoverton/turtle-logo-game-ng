@@ -121,34 +121,25 @@ export class TurtleEngineService {
     this.currentCommandIndex.set(0);
 
     try {
-      for (let i = 0; i < commands.length; i++) {
+      // Flatten all commands including REPEAT loops into a single execution queue
+      const flattenedCommands = this.flattenCommands(commands);
+      
+      for (let i = 0; i < flattenedCommands.length; i++) {
         if (!this.isRunning()) break; // Allow stopping mid-execution
         
         this.currentCommandIndex.set(i);
-        const command = commands[i];
+        const command = flattenedCommands[i];
         
-        if (command.type === 'REPEAT') {
-          const repeatCount = command.value || 1;
-          const repeatCommands = command.commands || [];
-          
-          for (let j = 0; j < repeatCount; j++) {
-            if (!this.isRunning()) break;
-            
-            const success = await this.executeProgram(repeatCommands, obstacles);
-            if (!success) return false; // Collision or error
-          }
-        } else {
-          // Check for collision before executing
-          if (this.wouldCollideWithObstacle(command, obstacles)) {
-            return false; // Collision detected
-          }
-          
-          const success = this.executeCommand(command);
-          if (!success) return false; // Boundary collision
+        // Check for collision before executing
+        if (this.wouldCollideWithObstacle(command, obstacles)) {
+          return false; // Collision detected
         }
         
-        // Animation delay
-        await this.delay(this.animationSpeed());
+        const success = this.executeCommand(command);
+        if (!success) return false; // Boundary collision
+        
+        // Animation delay (much shorter for better performance)
+        await this.delay(Math.max(1, this.animationSpeed() / 10));
       }
       
       return true;
@@ -156,6 +147,27 @@ export class TurtleEngineService {
       this.isRunning.set(false);
       this.currentCommandIndex.set(-1);
     }
+  }
+
+  private flattenCommands(commands: Command[]): Command[] {
+    const flattened: Command[] = [];
+    
+    for (const command of commands) {
+      if (command.type === 'REPEAT') {
+        const repeatCount = command.value || 1;
+        const repeatCommands = command.commands || [];
+        
+        // Recursively flatten the repeat commands and repeat them
+        const flattenedRepeatCommands = this.flattenCommands(repeatCommands);
+        for (let i = 0; i < repeatCount; i++) {
+          flattened.push(...flattenedRepeatCommands);
+        }
+      } else {
+        flattened.push(command);
+      }
+    }
+    
+    return flattened;
   }
 
   stopExecution(): void {
