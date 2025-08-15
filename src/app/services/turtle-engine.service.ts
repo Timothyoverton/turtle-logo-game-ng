@@ -56,8 +56,9 @@ export class TurtleEngineService {
         const actualDistance = command.type === 'BACK' ? -distance : distance;
         const startPos = { x: newTurtle.position.x, y: newTurtle.position.y };
         
-        // Calculate new position
-        const radians = (newTurtle.position.angle * Math.PI) / 180;
+        // Calculate new position (adjust angle so 0 degrees points up instead of right)
+        const adjustedAngle = newTurtle.position.angle - 90;
+        const radians = (adjustedAngle * Math.PI) / 180;
         const newX = newTurtle.position.x + Math.cos(radians) * actualDistance;
         const newY = newTurtle.position.y - Math.sin(radians) * actualDistance; // Y inverted for screen coordinates
         
@@ -200,7 +201,8 @@ export class TurtleEngineService {
     const currentTurtle = this.turtle();
     const distance = command.value || 0;
     const actualDistance = command.type === 'BACK' ? -distance : distance;
-    const radians = (currentTurtle.position.angle * Math.PI) / 180;
+    const adjustedAngle = currentTurtle.position.angle - 90;
+    const radians = (adjustedAngle * Math.PI) / 180;
     const newX = currentTurtle.position.x + Math.cos(radians) * actualDistance;
     const newY = currentTurtle.position.y - Math.sin(radians) * actualDistance;
     

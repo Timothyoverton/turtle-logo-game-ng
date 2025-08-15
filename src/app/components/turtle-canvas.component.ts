@@ -185,8 +185,8 @@ export class TurtleCanvasComponent implements AfterViewInit {
     
     // Move to turtle position and rotate
     ctx.translate(x, y);
-    // Adjust rotation: start facing up (subtract 90 degrees) and apply current angle
-    ctx.rotate((-angle - 90) * Math.PI / 180); // Convert to radians, negative for screen coordinates
+    // Rotate turtle to face current direction (negative for screen coordinates)
+    ctx.rotate(-angle * Math.PI / 180); // Convert to radians, negative for screen coordinates
     
     // Draw turtle body (shell)
     ctx.fillStyle = '#228B22';
@@ -197,20 +197,20 @@ export class TurtleCanvasComponent implements AfterViewInit {
     ctx.fill();
     ctx.stroke();
     
-    // Draw turtle head (pointing right - direction of movement)
+    // Draw turtle head (pointing up - direction of movement)
     ctx.fillStyle = '#32CD32';
     ctx.beginPath();
-    ctx.ellipse(8, 0, 3, 4, 0, 0, 2 * Math.PI);
+    ctx.ellipse(0, -8, 4, 3, 0, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
     
     // Draw turtle eyes
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(8, -2, 1, 0, 2 * Math.PI);
+    ctx.arc(-2, -8, 1, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(8, 2, 1, 0, 2 * Math.PI);
+    ctx.arc(2, -8, 1, 0, 2 * Math.PI);
     ctx.fill();
     
     // Draw shell pattern
@@ -228,19 +228,19 @@ export class TurtleCanvasComponent implements AfterViewInit {
     ctx.lineTo(-4, 2);
     ctx.stroke();
     
-    // Draw legs (adjusted for rightward-facing turtle)
+    // Draw legs (adjusted for upward-facing turtle)
     ctx.fillStyle = '#32CD32';
     ctx.beginPath();
-    ctx.arc(-2, -6, 1.5, 0, 2 * Math.PI);
+    ctx.arc(-6, -2, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(-2, 6, 1.5, 0, 2 * Math.PI);
+    ctx.arc(6, -2, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(2, -6, 1.5, 0, 2 * Math.PI);
+    ctx.arc(-6, 2, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(2, 6, 1.5, 0, 2 * Math.PI);
+    ctx.arc(6, 2, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     
     ctx.restore();
