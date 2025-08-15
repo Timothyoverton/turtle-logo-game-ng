@@ -196,20 +196,20 @@ export class TurtleCanvasComponent implements AfterViewInit {
     ctx.fill();
     ctx.stroke();
     
-    // Draw turtle head
+    // Draw turtle head (pointing right - direction of movement)
     ctx.fillStyle = '#32CD32';
     ctx.beginPath();
-    ctx.ellipse(0, -8, 4, 3, 0, 0, 2 * Math.PI);
+    ctx.ellipse(8, 0, 3, 4, 0, 0, 2 * Math.PI);
     ctx.fill();
     ctx.stroke();
     
     // Draw turtle eyes
     ctx.fillStyle = '#000';
     ctx.beginPath();
-    ctx.arc(-2, -8, 1, 0, 2 * Math.PI);
+    ctx.arc(8, -2, 1, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(2, -8, 1, 0, 2 * Math.PI);
+    ctx.arc(8, 2, 1, 0, 2 * Math.PI);
     ctx.fill();
     
     // Draw shell pattern
@@ -227,19 +227,19 @@ export class TurtleCanvasComponent implements AfterViewInit {
     ctx.lineTo(-4, 2);
     ctx.stroke();
     
-    // Draw legs
+    // Draw legs (adjusted for rightward-facing turtle)
     ctx.fillStyle = '#32CD32';
     ctx.beginPath();
-    ctx.arc(-6, -2, 1.5, 0, 2 * Math.PI);
+    ctx.arc(-2, -6, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(6, -2, 1.5, 0, 2 * Math.PI);
+    ctx.arc(-2, 6, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(-6, 2, 1.5, 0, 2 * Math.PI);
+    ctx.arc(2, -6, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     ctx.beginPath();
-    ctx.arc(6, 2, 1.5, 0, 2 * Math.PI);
+    ctx.arc(2, 6, 1.5, 0, 2 * Math.PI);
     ctx.fill();
     
     ctx.restore();
