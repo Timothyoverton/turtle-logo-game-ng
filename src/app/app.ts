@@ -48,10 +48,6 @@ export class App {
     }
   }
 
-  onStepCommands(program: ParsedProgram): void {
-    // TODO: Implement step-by-step execution
-    console.log('Step execution not yet implemented');
-  }
 
   onClearCanvas(): void {
     this.turtleEngine.reset();
