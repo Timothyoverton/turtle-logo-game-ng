@@ -51,13 +51,15 @@ export class TurtleEngineService {
 
     switch (command.type) {
       case 'FORWARD':
+      case 'BACK':
         const distance = command.value || 0;
+        const actualDistance = command.type === 'BACK' ? -distance : distance;
         const startPos = { x: newTurtle.position.x, y: newTurtle.position.y };
         
         // Calculate new position
         const radians = (newTurtle.position.angle * Math.PI) / 180;
-        const newX = newTurtle.position.x + Math.cos(radians) * distance;
-        const newY = newTurtle.position.y - Math.sin(radians) * distance; // Y inverted for screen coordinates
+        const newX = newTurtle.position.x + Math.cos(radians) * actualDistance;
+        const newY = newTurtle.position.y - Math.sin(radians) * actualDistance; // Y inverted for screen coordinates
         
         const endPos = { x: newX, y: newY };
         
@@ -193,13 +195,14 @@ export class TurtleEngineService {
   }
 
   private wouldCollideWithObstacle(command: Command, obstacles: Obstacle[]): boolean {
-    if (command.type !== 'FORWARD' || obstacles.length === 0) return false;
+    if ((command.type !== 'FORWARD' && command.type !== 'BACK') || obstacles.length === 0) return false;
     
     const currentTurtle = this.turtle();
     const distance = command.value || 0;
+    const actualDistance = command.type === 'BACK' ? -distance : distance;
     const radians = (currentTurtle.position.angle * Math.PI) / 180;
-    const newX = currentTurtle.position.x + Math.cos(radians) * distance;
-    const newY = currentTurtle.position.y - Math.sin(radians) * distance;
+    const newX = currentTurtle.position.x + Math.cos(radians) * actualDistance;
+    const newY = currentTurtle.position.y - Math.sin(radians) * actualDistance;
     
     return this.checkCollisionWithObstacles({ x: newX, y: newY }, obstacles);
   }

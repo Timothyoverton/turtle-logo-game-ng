@@ -20,7 +20,7 @@ export interface DrawingInstruction {
 }
 
 export interface Command {
-  type: 'FORWARD' | 'LEFT' | 'RIGHT' | 'PENUP' | 'PENDOWN' | 'CLEAR' | 'REPEAT' | 'COL';
+  type: 'FORWARD' | 'LEFT' | 'RIGHT' | 'BACK' | 'PENUP' | 'PENDOWN' | 'CLEAR' | 'REPEAT' | 'COL';
   value?: number;
   commands?: Command[]; // for REPEAT loops
 }
