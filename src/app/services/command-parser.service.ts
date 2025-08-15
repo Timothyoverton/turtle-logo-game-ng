@@ -30,10 +30,13 @@ export class CommandParserService {
   }
 
   private normalizeInput(input: string): string {
-    // Remove comments and normalize whitespace
+    // Remove comments (both # and ;) and normalize whitespace
     return input
       .split('\n')
-      .map(line => line.replace(/#.*$/, '').trim()) // Remove comments
+      .map(line => {
+        // Remove comments that start with # or ;
+        return line.replace(/[#;].*$/, '').trim();
+      })
       .filter(line => line.length > 0) // Remove empty lines
       .join(' ')
       .replace(/\s+/g, ' ') // Normalize whitespace
@@ -41,12 +44,25 @@ export class CommandParserService {
   }
 
   private tokenize(input: string): string[] {
-    // Split into tokens while preserving brackets
+    // Split into tokens while preserving brackets and handling comments
     const tokens: string[] = [];
     let current = '';
     
     for (let i = 0; i < input.length; i++) {
       const char = input[i];
+      
+      // Skip everything after ; or # (comments)
+      if (char === ';' || char === '#') {
+        if (current.trim()) {
+          tokens.push(...current.trim().split(/\s+/));
+          current = '';
+        }
+        // Skip to end of line or string
+        while (i < input.length && input[i] !== '\n') {
+          i++;
+        }
+        continue;
+      }
       
       if (char === '[' || char === ']') {
         if (current.trim()) {
@@ -110,6 +126,10 @@ export class CommandParserService {
       case 'FD':
         return this.parseMovementCommand('FORWARD', tokens, startIndex);
         
+      case 'BACK':
+      case 'BK':
+        return this.parseMovementCommand('BACK', tokens, startIndex);
+        
       case 'LEFT':
       case 'LT':
         return this.parseMovementCommand('LEFT', tokens, startIndex);
@@ -145,7 +165,7 @@ export class CommandParserService {
   }
 
   private parseMovementCommand(
-    type: 'FORWARD' | 'LEFT' | 'RIGHT' | 'COL', 
+    type: 'FORWARD' | 'LEFT' | 'RIGHT' | 'BACK' | 'COL', 
     tokens: string[], 
     startIndex: number
   ): { command?: Command, error?: string, nextIndex: number } {
@@ -285,13 +305,13 @@ RIGHT 120
 FORWARD 50`,
       'Flower': 'REPEAT 8 [ REPEAT 20 [ FORWARD 8 RIGHT 18 ] RIGHT 45 ]',
       'Big Flower': 'REPEAT 12 [ REPEAT 15 [ FORWARD 24 RIGHT 24 ] RIGHT 30 ]',
-      'Sunflower': `REPEAT 16 [
-FORWARD 40
-REPEAT 6 [ FORWARD 8 RIGHT 60 ]
+      'Sunflower': `REPEAT 12 [
+FORWARD 25
+REPEAT 4 [ FORWARD 6 RIGHT 90 ]
 PENUP
-FORWARD 40
+FORWARD 25
 PENDOWN
-RIGHT 22.5
+RIGHT 30
 ]`,
       'Rainbow Spiral': 'REPEAT 360 [ FORWARD 3 RIGHT 91 ]',
       'Rainbow Square': `COL 2
@@ -304,7 +324,107 @@ RIGHT 90
 FORWARD 100
 COL 4
 RIGHT 90
-FORWARD 100`
+FORWARD 100`,
+      'Flow of Life': `; Draw center circle only once
+REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+
+; Move to starting point for first outer circle
+RIGHT 60
+
+; Draw 5 surrounding circles using BACK (avoid drawing the last twice)
+REPEAT 5 [
+  PENUP
+  FORWARD 10         ; Move to circumference
+  PENDOWN
+  REPEAT 60 [ FORWARD 5 RIGHT 6 ]  ; Draw outer circle
+  PENUP
+  BACK 10            ; Return to center
+  RIGHT 60           ; Rotate to next position
+]`,
+      'Rainbow Flower of Life': `; Flower of Life cluster with explicit colors (COL takes literals only)
+; COLORS: 0-15 available. Change the COL numbers below to tune colors.
+
+PENUP
+FORWARD 70
+
+; ---- Center flower (color 1) ----
+COL 1
+; center circle
+REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+RIGHT 60
+; 5 surrounding circles for this flower
+REPEAT 5 [
+  PENUP
+  FORWARD 10
+  PENDOWN
+  REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+  PENUP
+  BACK 10
+  RIGHT 60
+]
+
+; ---- Five flowers arranged around the center ----
+; Each outer flower uses a different color and is placed 72 degrees apart.
+
+; Flower A (color 2)
+COL 2
+PENUP
+FORWARD 140
+PENDOWN
+REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+RIGHT 60
+REPEAT 5 [ PENUP FORWARD 10 PENDOWN REPEAT 60 [ FORWARD 5 RIGHT 6 ] PENUP BACK 10 RIGHT 60 ]
+PENUP
+BACK 20
+RIGHT 72
+
+; Flower B (color 3)
+COL 3
+PENUP
+FORWARD 140
+PENDOWN
+REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+RIGHT 60
+REPEAT 5 [ PENUP FORWARD 10 PENDOWN REPEAT 60 [ FORWARD 5 RIGHT 6 ] PENUP BACK 10 RIGHT 60 ]
+PENUP
+BACK 20
+RIGHT 72
+
+; Flower C (color 4)
+COL 4
+PENUP
+FORWARD 140
+PENDOWN
+REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+RIGHT 60
+REPEAT 5 [ PENUP FORWARD 10 PENDOWN REPEAT 60 [ FORWARD 5 RIGHT 6 ] PENUP BACK 10 RIGHT 60 ]
+PENUP
+BACK 20
+RIGHT 72
+
+; Flower D (color 5)
+COL 5
+PENUP
+FORWARD 140
+PENDOWN
+REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+RIGHT 60
+REPEAT 5 [ PENUP FORWARD 10 PENDOWN REPEAT 60 [ FORWARD 5 RIGHT 6 ] PENUP BACK 10 RIGHT 60 ]
+PENUP
+BACK 20
+RIGHT 72
+
+; Flower E (color 6)
+COL 6
+PENUP
+FORWARD 140
+PENDOWN
+REPEAT 60 [ FORWARD 5 RIGHT 6 ]
+RIGHT 60
+REPEAT 5 [ PENUP FORWARD 10 PENDOWN REPEAT 60 [ FORWARD 5 RIGHT 6 ] PENUP BACK 10 RIGHT 60 ]
+PENUP
+BACK 20
+RIGHT 72`
     };
   }
 }

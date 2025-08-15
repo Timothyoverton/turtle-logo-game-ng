@@ -14,7 +14,24 @@ import { Obstacle } from '../types/turtle.types';
         class="turtle-canvas">
       </canvas>
       <div class="turtle-sprite" [style]="turtleStyle()">
-        🐢
+        <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <!-- Turtle body -->
+          <ellipse cx="12" cy="14" rx="8" ry="6" fill="#228B22" stroke="#006400" stroke-width="1"/>
+          <!-- Turtle head -->
+          <ellipse cx="12" cy="8" rx="4" ry="3" fill="#32CD32" stroke="#006400" stroke-width="1"/>
+          <!-- Turtle eyes -->
+          <circle cx="10" cy="7" r="1" fill="#000"/>
+          <circle cx="14" cy="7" r="1" fill="#000"/>
+          <!-- Shell pattern -->
+          <ellipse cx="12" cy="14" rx="6" ry="4" fill="none" stroke="#006400" stroke-width="1"/>
+          <line x1="8" y1="12" x2="16" y2="16" stroke="#006400" stroke-width="0.5"/>
+          <line x1="16" y1="12" x2="8" y2="16" stroke="#006400" stroke-width="0.5"/>
+          <!-- Legs -->
+          <circle cx="6" cy="12" r="1.5" fill="#32CD32" stroke="#006400" stroke-width="0.5"/>
+          <circle cx="18" cy="12" r="1.5" fill="#32CD32" stroke="#006400" stroke-width="0.5"/>
+          <circle cx="6" cy="16" r="1.5" fill="#32CD32" stroke="#006400" stroke-width="0.5"/>
+          <circle cx="18" cy="16" r="1.5" fill="#32CD32" stroke="#006400" stroke-width="0.5"/>
+        </svg>
       </div>
     </div>
   `,
@@ -35,12 +52,13 @@ import { Obstacle } from '../types/turtle.types';
     
     .turtle-sprite {
       position: absolute;
-      font-size: 24px;
+      width: 24px;
+      height: 24px;
       transform-origin: center center;
       pointer-events: none;
       transition: all 0.1s ease-in-out;
       z-index: 10;
-      text-shadow: 0 0 3px rgba(255,255,255,0.8);
+      filter: drop-shadow(0 0 2px rgba(255,255,255,0.8));
     }
     
     .canvas-container:hover {

@@ -40,3 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Conversation exports
+2025-08-10-this-session-is-being-continued-from-a-previous-co.txt

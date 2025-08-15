@@ -58,10 +58,9 @@ REPEAT 4 [ FORWARD 50 RIGHT 90 ]"
         </button>
         
         <button 
-          (click)="stepProgram()" 
-          [disabled]="!canRun()"
+          (click)="clearCanvas.emit()"
           class="btn btn-secondary">
-          ⏯️ Step
+          🧹 Clear Canvas
         </button>
         
         <button 
@@ -80,6 +79,7 @@ REPEAT 4 [ FORWARD 50 RIGHT 90 ]"
             <strong>Movement:</strong>
             <ul>
               <li><code>FORWARD 100</code> - Move forward 100 pixels</li>
+              <li><code>BACK 50</code> - Move backward 50 pixels</li>
               <li><code>LEFT 90</code> - Turn left 90 degrees</li>
               <li><code>RIGHT 45</code> - Turn right 45 degrees</li>
             </ul>
@@ -94,9 +94,10 @@ REPEAT 4 [ FORWARD 50 RIGHT 90 ]"
             </ul>
           </div>
           <div class="help-section">
-            <strong>Loops:</strong>
+            <strong>Loops & Comments:</strong>
             <ul>
               <li><code>REPEAT 4 [ FORWARD 50 RIGHT 90 ]</code> - Repeat commands</li>
+              <li><code>; This is a comment</code> - Add comments to your code</li>
             </ul>
           </div>
         </div>
@@ -293,7 +294,6 @@ REPEAT 4 [ FORWARD 50 RIGHT 90 ]"
 })
 export class CommandInputComponent {
   @Output() runCommands = new EventEmitter<ParsedProgram>();
-  @Output() stepCommands = new EventEmitter<ParsedProgram>();
   @Output() clearCanvas = new EventEmitter<void>();
 
   commands = signal('');
@@ -328,12 +328,6 @@ export class CommandInputComponent {
     }
   }
 
-  stepProgram(): void {
-    const parsed = this.parser.parseCommands(this.commands());
-    if (parsed.errors.length === 0) {
-      this.stepCommands.emit(parsed);
-    }
-  }
 
   clearProgram(): void {
     this.commands.set('');
