@@ -185,7 +185,8 @@ export class TurtleCanvasComponent implements AfterViewInit {
     
     // Move to turtle position and rotate
     ctx.translate(x, y);
-    ctx.rotate(-angle * Math.PI / 180); // Convert to radians, negative for screen coordinates
+    // Adjust rotation: start facing up (subtract 90 degrees) and apply current angle
+    ctx.rotate((-angle - 90) * Math.PI / 180); // Convert to radians, negative for screen coordinates
     
     // Draw turtle body (shell)
     ctx.fillStyle = '#228B22';
